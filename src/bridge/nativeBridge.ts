@@ -1,4 +1,11 @@
 export const sendToNative = (payload: any) => {
+  // RN에서 window.addEventListener('message', ...)로 받을 수 있도록
+  // window.postMessage를 사용
+  if (typeof window !== 'undefined') {
+    window.postMessage(payload, '*');
+  }
+  
+  // ReactNativeWebView.postMessage도 함께 호출 (호환성)
   if ((window as any).ReactNativeWebView) {
     (window as any).ReactNativeWebView.postMessage(
       JSON.stringify(payload),
