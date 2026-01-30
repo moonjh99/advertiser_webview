@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { sendToNative, setupNativeMessageListener } from '../bridge/nativeBridge';
 
@@ -24,12 +24,12 @@ export default function Signup() {
     return cleanup;
   }, [navigate]);
 
-  const handleSignup = () => {
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!name || !email || !password) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
-
     sendToNative({
       type: 'SIGN_UP',
       name,
@@ -40,33 +40,38 @@ export default function Signup() {
 
   return (
     <Layout>
-      <h2>회원가입</h2>
-
-      <input
-        type="text"
-        placeholder="이름"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{ width: '100%', padding: 8, marginBottom: 8 }}
-      />
-      <input
-        type="email"
-        placeholder="이메일"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ width: '100%', padding: 8, marginBottom: 8 }}
-      />
-      <input
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: '100%', padding: 8, marginBottom: 12 }}
-      />
-
-      <button style={{ width: '100%', padding: 10 }} onClick={handleSignup}>
-        회원가입
-      </button>
+      <div className="auth-card card">
+        <h2 className="auth-title">회원가입</h2>
+        <form className="auth-form" onSubmit={handleSignup}>
+          <input
+            type="text"
+            className="input"
+            placeholder="이름"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            type="email"
+            className="input"
+            placeholder="이메일"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            className="input"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" className="btn btn-primary">
+            회원가입
+          </button>
+        </form>
+        <p className="auth-footer">
+          이미 계정이 있으신가요? <Link to="/">로그인</Link>
+        </p>
+      </div>
     </Layout>
   );
 }

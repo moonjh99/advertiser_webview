@@ -40,8 +40,8 @@ export default function ProductList() {
   if (loading) {
     return (
       <Layout>
-        <h2>상품 목록</h2>
-        <p>로딩 중...</p>
+        <h2 className="page-title">상품 목록</h2>
+        <div className="loading-spinner">로딩 중...</div>
       </Layout>
     );
   }
@@ -49,37 +49,42 @@ export default function ProductList() {
   if (error) {
     return (
       <Layout>
-        <h2>상품 목록</h2>
-        <p style={{ color: 'red' }}>{error}</p>
+        <h2 className="page-title">상품 목록</h2>
+        <div className="error-state">{error}</div>
+      </Layout>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <Layout>
+        <h2 className="page-title">상품 목록</h2>
+        <div className="empty-state">등록된 상품이 없습니다.</div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <h2>상품 목록</h2>
-
-      {products.length === 0 ? (
-        <p>등록된 상품이 없습니다.</p>
-      ) : (
-        products.map((p) => (
-          <div
-            key={p.id}
-            style={{
-              border: '1px solid #ddd',
-              padding: 12,
-              marginBottom: 10,
-            }}
-          >
-            <strong>
-              <Link to={`/products/${p.id}`}>{p.name}</Link>
-            </strong>
-            <p>{p.price.toLocaleString()}원</p>
-            {p.description && <p style={{ fontSize: 14, color: '#666' }}>{p.description}</p>}
-            <button onClick={() => handlePurchase(p)}>구매하기</button>
-          </div>
-        ))
-      )}
+      <h2 className="page-title">상품 목록</h2>
+      <div className="product-grid">
+        {products.map((p) => (
+          <article key={p.id} className="product-card card">
+            <Link to={`/products/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="product-card-image">상품 이미지</div>
+              <div className="product-card-body">
+                <h3 className="product-card-name">{p.name}</h3>
+                <p className="product-card-price">{p.price.toLocaleString()}원</p>
+              </div>
+            </Link>
+            <div className="product-card-body" style={{ paddingTop: 0 }}>
+              <button type="button" className="btn btn-primary" onClick={() => handlePurchase(p)}>
+                구매하기
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
     </Layout>
   );
 }

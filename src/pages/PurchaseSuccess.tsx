@@ -21,12 +21,10 @@ export default function PurchaseSuccess() {
       return;
     }
 
-    // RN에서 주문 생성 응답 받기
     const cleanup = setupNativeMessageListener((data) => {
       if (data.type === 'CREATE_ORDER_RESPONSE') {
         setLoading(false);
         if (data.success) {
-          // RN 응답 형식: data.data (id, totalAmount 등) — PURCHASE/트래킹은 RN에서 CREATE_ORDER로 통일
           const orderId = data.data?.id ?? data.orderId;
           setOrderId(orderId);
         } else {
@@ -35,20 +33,10 @@ export default function PurchaseSuccess() {
       }
     });
 
-    // RN으로 주문 생성 요청 보내기
     const orderRequest: CreateOrderRequest = {
-      items: [
-        {
-          productId: product.id,
-          quantity: 1, // 기본값 1개, 필요시 수량 선택 기능 추가 가능
-        },
-      ],
+      items: [{ productId: product.id, quantity: 1 }],
     };
-
-    sendToNative({
-      type: 'CREATE_ORDER',
-      orderRequest,
-    });
+    sendToNative({ type: 'CREATE_ORDER', orderRequest });
 
     return cleanup;
   }, [product]);
@@ -56,8 +44,8 @@ export default function PurchaseSuccess() {
   if (loading) {
     return (
       <Layout>
-        <h2>주문 처리 중...</h2>
-        <p>잠시만 기다려주세요.</p>
+        <h2 className="page-title">주문 처리 중</h2>
+        <div className="loading-spinner">잠시만 기다려주세요.</div>
       </Layout>
     );
   }
@@ -65,19 +53,31 @@ export default function PurchaseSuccess() {
   if (error) {
     return (
       <Layout>
-        <h2>주문 실패</h2>
-        <p style={{ color: 'red' }}>{error}</p>
-        <Link to="/products">상품 목록으로</Link>
+        <h2 className="page-title">주문 실패</h2>
+        <div className={`result-card card error`}>
+          <div className="result-icon">⚠️</div>
+          <h3 className="result-title">주문을 완료하지 못했습니다</h3>
+          <p className="result-message">{error}</p>
+          <Link to="/products" className="btn btn-primary">
+            상품 목록으로
+          </Link>
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <h2>구매 완료</h2>
-      <p>주문이 정상적으로 완료되었습니다.</p>
-      {orderId && <p>주문 번호: {orderId}</p>}
-      <Link to="/products">상품 목록으로</Link>
+      <h2 className="page-title">구매 완료</h2>
+      <div className="result-card card success">
+        <div className="result-icon">✓</div>
+        <h3 className="result-title">주문이 완료되었습니다</h3>
+        <p className="result-message">결제가 정상적으로 처리되었습니다.</p>
+        {orderId != null && <p className="result-order-id">주문 번호: {orderId}</p>}
+        <Link to="/products" className="btn btn-primary">
+          상품 목록으로
+        </Link>
+      </div>
     </Layout>
   );
 }

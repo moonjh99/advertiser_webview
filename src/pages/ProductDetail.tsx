@@ -47,8 +47,8 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <Layout>
-        <h2>상품 상세</h2>
-        <p>로딩 중...</p>
+        <h2 className="page-title">상품 상세</h2>
+        <div className="loading-spinner">로딩 중...</div>
       </Layout>
     );
   }
@@ -56,22 +56,32 @@ export default function ProductDetail() {
   if (error || !product) {
     return (
       <Layout>
-        <h2>상품 상세</h2>
-        <p style={{ color: 'red' }}>{error ?? '상품을 찾을 수 없습니다.'}</p>
-        <Link to="/products">상품 목록으로</Link>
+        <h2 className="page-title">상품 상세</h2>
+        <div className="error-state">{error ?? '상품을 찾을 수 없습니다.'}</div>
+        <Link to="/products" className="back-link">
+          ← 상품 목록으로
+        </Link>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <h2>{product.name}</h2>
-      <p><strong>{product.price.toLocaleString()}원</strong></p>
-      {product.description && <p>{product.description}</p>}
-      <button onClick={handlePurchase}>구매하기</button>
-      <p style={{ marginTop: 12 }}>
-        <Link to="/products">← 상품 목록</Link>
-      </p>
+      <h2 className="page-title">상품 상세</h2>
+      <div className="product-detail-card card">
+        <div className="product-detail-image">상품 이미지</div>
+        <div className="product-detail-body">
+          <h1 className="product-detail-name">{product.name}</h1>
+          <p className="product-detail-price">{product.price.toLocaleString()}원</p>
+          {product.description && <p className="product-detail-desc">{product.description}</p>}
+          <button type="button" className="btn btn-primary" onClick={handlePurchase}>
+            구매하기
+          </button>
+        </div>
+      </div>
+      <Link to="/products" className="back-link">
+        ← 상품 목록
+      </Link>
     </Layout>
   );
 }
